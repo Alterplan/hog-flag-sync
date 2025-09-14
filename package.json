@@ -1,6 +1,6 @@
 {
 	"name": "@alterplan/hog-flag-sync",
-	"version": "0.0.0",
+	"version": "1.0.0",
 	"description": "A bridge for NextJS to sync Posthog toolbar flag overrides between client side and server side.",
 	"homepage": "https://github.com/Alterplan/hog-flag-sync#readme",
 	"bugs": {
