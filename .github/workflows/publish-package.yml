@@ -1,0 +1,61 @@
+name: Release a new package version
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version bump type"
+        type: choice
+        options: [patch, minor, major]
+        default: patch
+      preid:
+        description: "Pre-release id (e.g. beta, rc). Leave empty for stable."
+        type: string
+        default: ""
+
+permissions:
+  contents: write     # create tags & GitHub Releases
+  packages: write     # publish to GitHub Packages
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: git config
+        run: |
+          git config user.name "${GITHUB_ACTOR}"
+          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://npm.pkg.github.com
+          scope: '@alterplan'
+          always-auth: true
+          cache: 'npm'
+
+      - run: npm ci
+      - run: npm test --if-present
+      - run: npm run build --if-present
+
+      # Stable release -> publishes to GitHub Packages
+      - name: Release (stable)
+        if: inputs.preid == ''
+        env:
+          # Use the repo's GITHUB_TOKEN to publish to GitHub Packages
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx release-it ${{ inputs.version }} --ci
+
+      # Pre-release -> publish under npm dist-tag "next"
+      - name: Release (pre-release)
+        if: inputs.preid != ''
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx release-it ${{ inputs.version }} --preRelease=${{ inputs.preid }} --npm.tag=next --ci

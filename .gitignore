@@ -1,0 +1,15 @@
+node_modules
+target
+dist
+logs
+.cache
+.DS_Store
+.idea
+.next
+yarn-error.log
+npm-debug.log
+.vercel
+.env.*.local
+.env.local
+*.tgz
+*.log
