@@ -14,6 +14,23 @@ type DevShortcutsOptions = {
 	};
 };
 
+// Detect Apple platforms (macOS, iOS, iPadOS)
+export function isApplePlatform(): boolean {
+	if (typeof navigator === "undefined") return false;
+	const platform =
+		(navigator as any).userAgentData?.platform || navigator.platform || "";
+	return /(Mac|iPhone|iPad|iPod)/i.test(platform);
+}
+
+// Return the primary modifier state for the current OS from a keyboard event
+function primaryKeyForOS(
+	e:
+		| Pick<KeyboardEvent, "metaKey" | "ctrlKey">
+		| Pick<React.KeyboardEvent, "metaKey" | "ctrlKey">,
+): boolean {
+	return isApplePlatform() ? !!e.metaKey : !!e.ctrlKey;
+}
+
 export function useDevShortcuts({
 	enabled = true,
 	onSync,
@@ -28,13 +45,14 @@ export function useDevShortcuts({
 		const toggleKey = (keys?.toggleButton ?? "h").toLowerCase();
 		const onKey = (e: KeyboardEvent) => {
 			const key = e.key.toLowerCase();
-			if (e.metaKey && e.shiftKey && key === syncKey) {
+			const cmdOrCtrl = primaryKeyForOS(e);
+			if (cmdOrCtrl && e.shiftKey && key === syncKey) {
 				e.preventDefault();
 				onSync();
-			} else if (e.metaKey && e.shiftKey && key === clearKey) {
+			} else if (cmdOrCtrl && e.shiftKey && key === clearKey) {
 				e.preventDefault();
 				onClear();
-			} else if (e.metaKey && e.shiftKey && key === toggleKey) {
+			} else if (cmdOrCtrl && e.shiftKey && key === toggleKey) {
 				e.preventDefault();
 				onToggleButton?.();
 			}

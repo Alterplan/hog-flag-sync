@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { isApplePlatform } from "../client/hooks/useDevShortcuts";
 import { HFS_TOOLBAR_VERSION } from "../version";
 
 export default function SyncMiniBar({
@@ -35,6 +36,9 @@ export default function SyncMiniBar({
 	};
 }) {
 	const ref = useRef<HTMLDivElement>(null);
+
+	// Determine correct modifier label per platform
+	const modShort = isApplePlatform() ? "⌘⇧" : "Ctrl+Shift";
 
 	// compute position above the anchor, clamped to viewport
 	const { left, top } = useMemo(() => {
@@ -500,7 +504,7 @@ export default function SyncMiniBar({
 						/>
 
 						<div style={{ fontWeight: 600, opacity: 0.9 }}>
-							Shortcuts (hold ⌘⇧ + key)
+							Shortcuts (hold {modShort} + key)
 						</div>
 						<div
 							style={{
@@ -588,7 +592,7 @@ export default function SyncMiniBar({
 							/>
 						</div>
 						<div style={{ opacity: 0.7 }}>
-							Shortcuts use ⌘⇧ + the chosen key.
+							Shortcuts use {modShort} + the chosen key.
 						</div>
 						<div
 							style={{
