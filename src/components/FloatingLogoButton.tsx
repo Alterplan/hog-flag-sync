@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect } from "react";
-import logo from "../image/logo.png";
+
+const logo = new URL("../image/logo.png", import.meta.url).toString();
 
 export function FloatingLogoButton({
 	pos,
