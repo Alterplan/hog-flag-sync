@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.0 (2025-09-14)
+
+* feat: support Ctrl-Shift instead of ⌘⇧ on Windows ([7d55104](https://github.com/Alterplan/hog-flag-sync/commit/7d55104))
+
 ## <small>1.0.1 (2025-09-14)</small>
 
 * fix: resolve image import using import.meta.url ([6e8febe](https://github.com/Alterplan/hog-flag-sync/commit/6e8febe))
